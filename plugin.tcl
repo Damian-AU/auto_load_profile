@@ -5,7 +5,7 @@ set plugin_name "auto_load_profile"
 namespace eval ::plugins::${plugin_name} {
     variable author "Damian"
     variable contact "via Diaspora"
-    variable description ""
+    variable description "This app extension allows you to set a profile to auto load when the app starts or wakes from sleep"
     variable version 1.0.0
     variable min_de1app_version {1.40.1}
 
