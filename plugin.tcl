@@ -6,7 +6,7 @@ namespace eval ::plugins::${plugin_name} {
     variable author "Damian"
     variable contact "via Diaspora"
     variable description "This app extension allows you to set a profile to auto load when the app starts or wakes from sleep"
-    variable version 1.0.0
+    variable version 1.1
     variable min_de1app_version {1.40.1}
 
     proc build_ui {} {
@@ -33,11 +33,16 @@ namespace eval ::plugins::${plugin_name} {
         }
         dui add canvas_item rect $page_name 0 0 2560 1600 -fill $background_colour -width 0
         dui add dtext $page_name 1280 240 -text [translate "Auto Load Profile"] -font [dui font get $font_bold 28] -fill $text_colour -anchor "center" -justify "center"
+        dui add variable $page_name 1280 320 -font [dui font get $font 16] -fill $orange -anchor center -width 1800 -textvariable {[::plugins::auto_load_profile::skin_check]}
+
         dui add variable $page_name 2510 1560 -font [dui font get $font 12] -fill $text_colour -anchor e -justify right -textvariable {Version $::plugins::auto_load_profile::version  by $::plugins::auto_load_profile::author}
 
         dui add variable $page_name 990 600 -font [dui font get $font 18] -fill $text_colour -anchor e -justify right -width 800 -textvariable {auto load profile = $::settings(auto_load_profile_title)}
         dui add variable $page_name 990 740 -font [dui font get $font 18] -fill $text_colour -anchor e -justify right -textvariable {current profile = $::settings(profile_title)}
         dui add variable $page_name 1660 650 -font [dui font get $font 16] -fill $orange -anchor w -width 600 -textvariable {$::settings(auto_load_profile_title) [translate "profile will automatically load when the app starts up or wakes from sleep"]}
+
+        if {$::settings(skin) == "DSx2" || $::settings(skin) == "DSx"} {
+            }
         dui add dbutton $page_name 1030 540 \
             -bwidth 500 -bheight 120 \
             -shape round -fill $foreground_colour -radius 60 \
@@ -56,8 +61,17 @@ namespace eval ::plugins::${plugin_name} {
 
     return $page_name
     }
-
+    proc skin_check {} {
+        if {$::settings(skin) == "DSx2" || $::settings(skin) == "DSx"} {
+            return [translate "$::settings(skin) has it's own auto load feature, settings for this extension will be ignored"]
+        } else {
+            return ""
+        }
+    }
     proc load_profile { args } {
+        if {$::settings(skin) == "DSx2" || $::settings(skin) == "DSx"} {
+            return
+        }
         if {$::settings(auto_load_profile_filename) != "No"} {
             select_profile $::settings(auto_load_profile_filename)
             if {$::settings(settings_profile_type) == "settings_2c2" || $::settings(settings_profile_type) == "settings_2c"} {
