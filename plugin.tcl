@@ -1,12 +1,16 @@
 ### By Damian Brakel ###
 set plugin_name "auto_load_profile"
 
+if {![info exist ::settings(auto_load_profile_filename)]} {
+    set ::settings(auto_load_profile_filename) No
+    set ::settings(auto_load_profile_title) No
+}
 
 namespace eval ::plugins::${plugin_name} {
     variable author "Damian"
     variable contact "via Diaspora"
     variable description "This app extension allows you to set a profile to auto load when the app starts or wakes from sleep"
-    variable version 1.1
+    variable version 1.2
     variable min_de1app_version {1.40.1}
 
     proc build_ui {} {
@@ -27,10 +31,7 @@ namespace eval ::plugins::${plugin_name} {
         set font_bold "notosansuibold"
 
 
-        if {![info exist ::settings(auto_load_profile_filename)]} {
-            set ::settings(auto_load_profile_filename) No
-            set ::settings(auto_load_profile_title) No
-        }
+
         dui add canvas_item rect $page_name 0 0 2560 1600 -fill $background_colour -width 0
         dui add dtext $page_name 1280 240 -text [translate "Auto Load Profile"] -font [dui font get $font_bold 28] -fill $text_colour -anchor "center" -justify "center"
         dui add variable $page_name 1280 320 -font [dui font get $font 16] -fill $orange -anchor center -width 1800 -textvariable {[::plugins::auto_load_profile::skin_check]}
@@ -84,6 +85,9 @@ namespace eval ::plugins::${plugin_name} {
             profile_has_changed_set_colors
             update_de1_explanation_chart
             fill_profiles_listbox
+        }
+        if {$::settings(skin) == "Streamline" || $::settings(skin) == "Streamline Dark"} {
+            refresh_favorite_profile_button_labels
         }
     }
 
